@@ -285,3 +285,19 @@ A production design would require secure trusted-device enrolment, protected sig
 KinCheck does not try to prove that a voice or message is fake.
 
 It demonstrates how a cryptographic signature can prove that an exact request payload was signed, and reject altered requests.
+
+## Extended Security Demo
+
+The verification workflow supports a configurable amount and recipient.
+
+After creating a request and approving it on the simulated trusted device, KinCheck demonstrates:
+
+- **Original request:** VERIFIED
+- **Modified amount:** REJECTED — signature mismatch
+- **Modified recipient:** REJECTED — signature mismatch
+- **Reused proof:** REJECTED — replay detected
+
+The request fields are locked after creation. Tampering demonstrations construct modified payloads and verify them against the original signature.
+
+These checks use real ECDSA P-256 signatures. The trusted device remains a local simulation, not an independently authenticated device.
+
