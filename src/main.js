@@ -1,4 +1,4 @@
-﻿import './style.css'
+import './style.css'
 
 import {
   parseWhatsAppExport,
@@ -62,7 +62,7 @@ document.querySelector('#app').innerHTML = `
             accept=".txt"
           >
 
-          <div class="upload-icon">â†‘</div>
+          <div class="upload-icon">&#8593;</div>
 
           <strong>Import WhatsApp .txt</strong>
 
@@ -88,7 +88,7 @@ document.querySelector('#app').innerHTML = `
           id="emptyState"
           class="empty-state"
         >
-          <div class="fingerprint">â—Ž</div>
+          <div class="fingerprint">&#9678;</div>
 
           <strong>No baseline yet</strong>
 
