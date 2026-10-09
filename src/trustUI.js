@@ -1,3 +1,4 @@
+
 import {
   generateTrustedKeys,
   createVerificationRequest,
@@ -6,7 +7,8 @@ import {
 } from './trustProof.js'
 
 // KinCheck — Trust Before Action
-// Demonstration: trusted device simulated locally.
+// Local simulation of a trusted device.
+// Cryptographic signing and verification are real.
 
 const result = document.querySelector('#result')
 const verdict = result.querySelector('.verdict')
@@ -22,29 +24,37 @@ panel.innerHTML = `
   <h2>Verify the action, not just the identity.</h2>
 
   <p>
-    A trusted device must authorise the exact action,
+    A cryptographic proof must match the exact action,
     amount and recipient.
   </p>
 
-  <button id="createTrustRequest" class="primary">
-    Create verification request
-  </button>
-
-  <div id="trustWorkspace" class="hidden">
-    <h3>Verification request</h3>
-
-    <p>
-      Action:
-      <strong>Send money</strong>
-    </p>
-
-    <label for="trustAmount">Amount (£)</label>
-    <input id="trustAmount" type="number"
-      value="20" min="0.01" step="0.01">
+  <div id="trustSetup">
+    <label for="trustAmount">Amount (GBP)</label>
+    <input
+      id="trustAmount"
+      type="number"
+      value="20"
+      min="0.01"
+      step="0.01"
+    >
 
     <label for="trustRecipient">Recipient</label>
-    <input id="trustRecipient" value="John">
+    <input
+      id="trustRecipient"
+      type="text"
+      value="John"
+      maxlength="100"
+    >
 
+    <button id="createTrustRequest" class="primary">
+      Create verification request
+    </button>
+  </div>
+
+  <div id="trustWorkspace" class="hidden">
+    <h3>Exact action requested</h3>
+
+    <p id="trustSummary"></p>
     <p id="trustRequestId"></p>
 
     <button id="approveTrust" class="primary">
@@ -56,22 +66,30 @@ panel.innerHTML = `
     </button>
 
     <button id="tamperTrust" class="danger-button" disabled>
-      Change amount to £800 and verify
+      Change amount to GBP 800 and verify
     </button>
 
-    <div id="trustOutcome" aria-live="polite"
-      style="margin-top:20px"></div>
+    <button id="tamperRecipient" class="danger-button" disabled>
+      Change recipient and verify
+    </button>
+
+    <button id="replayTrust" class="danger-button" disabled>
+      Reuse proof (replay attack)
+    </button>
+
+    <div id="trustOutcome" aria-live="polite"></div>
   </div>
 
   <small>
-    Security demo: ECDSA P-256 / SHA-256.
-    No banking integration or real device enrolment.
+    ECDSA P-256 / SHA-256.
+    Real signatures; simulated trusted device.
+    No real payments or secure device enrolment.
   </small>
 `
 
 result.appendChild(panel)
 
-const $ = (selector) => panel.querySelector(selector)
+const $ = selector => panel.querySelector(selector)
 
 let trustedKeys = null
 let request = null
@@ -85,7 +103,11 @@ function showOutcome(status, reason) {
   const heading = document.createElement('h3')
   heading.textContent = status
   heading.style.color =
-    status === 'VERIFIED' ? '#16a34a' : '#dc2626'
+    status === 'VERIFIED'
+      ? '#4be0ae'
+      : status === 'REJECTED' || status === 'ERROR'
+        ? '#ef4444'
+        : '#e8edf5'
 
   const detail = document.createElement('p')
   detail.textContent = reason
@@ -93,35 +115,72 @@ function showOutcome(status, reason) {
   outcome.append(heading, detail)
 }
 
+function setInputLocked(locked) {
+  $('#trustAmount').disabled = locked
+  $('#trustRecipient').disabled = locked
+}
+
+function resetButtons() {
+  $('#approveTrust').disabled = false
+  $('#verifyTrust').disabled = true
+  $('#tamperTrust').disabled = true
+  $('#tamperRecipient').disabled = true
+  $('#replayTrust').disabled = true
+}
+
 $('#createTrustRequest').addEventListener('click', async () => {
   try {
+    const amountText = $('#trustAmount').value
+    const amount = Number(amountText)
+    const recipient = $('#trustRecipient').value.trim()
+
+    if (
+      !amountText ||
+      !Number.isFinite(amount) ||
+      amount <= 0 ||
+      !recipient
+    ) {
+      showOutcome(
+        'ERROR',
+        'Enter a valid positive amount and recipient.'
+      )
+      $('#trustWorkspace').classList.remove('hidden')
+      return
+    }
+
     if (!trustedKeys) {
       trustedKeys = await generateTrustedKeys()
     }
 
-    $('#trustWorkspace').classList.remove('hidden')
-    $('#trustAmount').value = '20'
-    $('#trustRecipient').value = 'John'
-
     request = createVerificationRequest({
       action: 'send',
-      amount: 20,
-      recipient: 'John'
+      amount,
+      recipient
     })
 
     signature = null
     verificationUsed = new Set()
 
+    $('#trustWorkspace').classList.remove('hidden')
+
+    $('#trustSummary').textContent =
+      `Send GBP ${amount.toFixed(2)} to ${recipient}`
+
     $('#trustRequestId').textContent =
       `Request ID: ${request.requestId}`
 
-    $('#approveTrust').disabled = false
-    $('#verifyTrust').disabled = true
-    $('#tamperTrust').disabled = true
+    setInputLocked(true)
+    resetButtons()
 
-    showOutcome('PENDING', 'Awaiting trusted-device approval.')
+    showOutcome(
+      'PENDING',
+      'Awaiting approval of this exact request.'
+    )
   } catch {
-    showOutcome('ERROR', 'Unable to create verification request.')
+    showOutcome(
+      'ERROR',
+      'Unable to create verification request.'
+    )
   }
 })
 
@@ -129,8 +188,6 @@ $('#approveTrust').addEventListener('click', async () => {
   try {
     if (!request || !trustedKeys) return
 
-    // The trusted-device simulation signs the immutable
-    // request snapshot, never the editable input fields.
     signature = await signRequest(
       request,
       trustedKeys.privateKey
@@ -139,27 +196,83 @@ $('#approveTrust').addEventListener('click', async () => {
     $('#approveTrust').disabled = true
     $('#verifyTrust').disabled = false
     $('#tamperTrust').disabled = false
+    $('#tamperRecipient').disabled = false
 
     showOutcome(
       'APPROVED',
-      'Trusted device signed the exact £20 request for John.'
+      `Simulated trusted device signed: ${$('#trustSummary').textContent}`
     )
   } catch {
-    showOutcome('ERROR', 'Signing failed.')
+    showOutcome('ERROR', 'Cryptographic signing failed.')
   }
 })
 
 $('#verifyTrust').addEventListener('click', async () => {
-  if (!signature || !request) return
+  if (!request || !signature || !trustedKeys) return
 
-  const current = {
+  const outcome = await verifyRequest(
+    request,
+    signature,
+    trustedKeys.publicKey,
+    verificationUsed
+  )
+
+  showOutcome(outcome.status, outcome.reason)
+
+  if (outcome.status === 'VERIFIED') {
+    $('#replayTrust').disabled = false
+    $('#verifyTrust').disabled = true
+  }
+})
+
+$('#tamperTrust').addEventListener('click', async () => {
+  if (!request || !signature || !trustedKeys) return
+
+  const modified = {
     ...request,
-    amount: Number($('#trustAmount').value),
-    recipient: $('#trustRecipient').value
+    amount: request.amount === 800 ? 850 : 800
   }
 
   const outcome = await verifyRequest(
-    current,
+    modified,
+    signature,
+    trustedKeys.publicKey,
+    new Set()
+  )
+
+  showOutcome(
+    outcome.status,
+    `Amount changed from GBP ${request.amount.toFixed(2)} ` +
+    `to GBP ${modified.amount.toFixed(2)}. ${outcome.reason}`
+  )
+})
+
+$('#tamperRecipient').addEventListener('click', async () => {
+  if (!request || !signature || !trustedKeys) return
+
+  const modified = {
+    ...request,
+    recipient: `${request.recipient}-changed`
+  }
+
+  const outcome = await verifyRequest(
+    modified,
+    signature,
+    trustedKeys.publicKey,
+    new Set()
+  )
+
+  showOutcome(
+    outcome.status,
+    `Recipient changed. ${outcome.reason}`
+  )
+})
+
+$('#replayTrust').addEventListener('click', async () => {
+  if (!request || !signature || !trustedKeys) return
+
+  const outcome = await verifyRequest(
+    request,
     signature,
     trustedKeys.publicKey,
     verificationUsed
@@ -168,30 +281,7 @@ $('#verifyTrust').addEventListener('click', async () => {
   showOutcome(outcome.status, outcome.reason)
 })
 
-$('#tamperTrust').addEventListener('click', async () => {
-  if (!signature || !request) return
-
-  $('#trustAmount').value = '800'
-
-  const modified = {
-    ...request,
-    amount: 800,
-    recipient: $('#trustRecipient').value
-  }
-
-  // Independent verification context demonstrates that
-  // the signature fails even before replay protection.
-  const outcome = await verifyRequest(
-    modified,
-    signature,
-    trustedKeys.publicKey,
-    new Set()
-  )
-
-  showOutcome(outcome.status, outcome.reason)
-})
-
-// Reveal this feature only after VERIFY or HIGH RISK.
+// Reveal the panel after VERIFY or HIGH RISK.
 const observer = new MutationObserver(() => {
   const label = verdict.querySelector('strong')?.textContent
 
