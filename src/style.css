@@ -524,3 +524,94 @@ footer span:first-child {
     gap: 20px;
   }
 }
+/* KinCheck — Trust Before Action */
+
+#trust-before-action {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+  padding: 32px;
+  border: 1px solid #284e49;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #142820, #0e131c 70%);
+}
+
+#trust-before-action h2 {
+  margin: 12px 0;
+  font-size: 26px;
+}
+
+#trust-before-action p {
+  line-height: 1.6;
+  color: #a9b8c7;
+}
+
+#trustWorkspace {
+  margin-top: 28px;
+}
+
+#trustWorkspace label {
+  display: block;
+  margin: 18px 0 8px;
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+#trustWorkspace input {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  padding: 14px 16px;
+  border: 1px solid #394454;
+  border-radius: 10px;
+  background: #101820;
+  color: #ffffff;
+  font: inherit;
+}
+
+#trustWorkspace button {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  margin-top: 14px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+#trustWorkspace button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+#trustRequestId {
+  margin: 20px 0;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  color: #7f91a5;
+}
+
+#trustOutcome {
+  padding: 20px;
+  border: 1px solid #354655;
+  border-radius: 12px;
+  background: #101a22;
+}
+
+#trustOutcome h3 {
+  margin: 0 0 8px;
+  font-size: 24px;
+}
+
+#trust-before-action small {
+  display: block;
+  margin-top: 24px;
+  color: #8995a7;
+  line-height: 1.6;
+}
+
+@media (max-width: 760px) {
+  #trust-before-action {
+    padding: 20px;
+  }
+}
