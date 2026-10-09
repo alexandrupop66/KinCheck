@@ -696,7 +696,7 @@ function analyseIdentity(
   }
 
   const moneyPattern =
-    /(?:Â£|â‚¬|\$)\s?\d+|\b\d+\s?(?:pounds?|euros?|dollars?)\b/i
+    /(?:\u00A3|\u20AC|\$)\s?\d+|\b\d+\s?(?:pounds?|euros?|dollars?)\b/i
 
   const paymentWords = [
     'transfer',
