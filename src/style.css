@@ -615,3 +615,42 @@ footer span:first-child {
     padding: 20px;
   }
 }
+/* Trust Before Action — form layout */
+
+#trustSetup {
+  margin-top: 28px;
+}
+
+#trustSetup label {
+  display: block;
+  margin: 18px 0 8px;
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+#trustSetup input {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  padding: 14px 16px;
+  border: 1px solid #394454;
+  border-radius: 10px;
+  background: #101820;
+  color: #ffffff;
+  font: inherit;
+}
+
+#trustSetup input:disabled {
+  opacity: 0.6;
+}
+
+#trustSetup button {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  margin-top: 20px;
+}
+
+#trustOutcome {
+  margin-top: 24px;
+}
