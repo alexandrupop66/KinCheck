@@ -1,4 +1,4 @@
-import './style.css'
+﻿import './style.css'
 
 import {
   parseWhatsAppExport,
@@ -7,7 +7,7 @@ import {
 
 // ----------------------------------------------------
 // KinCheck
-// ForgeHacks 2026 — AI + Cybersecurity
+// ForgeHacks 2026 â€” AI + Cybersecurity
 //
 // Architecture:
 // AI proposes relationship evidence and challenges.
@@ -26,7 +26,7 @@ document.querySelector('#app').innerHTML = `
         </div>
       </div>
 
-      <div class="status">● Private by design</div>
+      <div class="status">â— Private by design</div>
     </header>
 
     <section class="hero">
@@ -39,7 +39,7 @@ document.querySelector('#app').innerHTML = `
 
       <p>
         When a message doesn't feel right, KinCheck compares it with the
-        relationship you actually know — not just the words on the screen.
+        relationship you actually know â€” not just the words on the screen.
       </p>
     </section>
 
@@ -62,7 +62,7 @@ document.querySelector('#app').innerHTML = `
             accept=".txt"
           >
 
-          <div class="upload-icon">↑</div>
+          <div class="upload-icon">â†‘</div>
 
           <strong>Import WhatsApp .txt</strong>
 
@@ -88,7 +88,7 @@ document.querySelector('#app').innerHTML = `
           id="emptyState"
           class="empty-state"
         >
-          <div class="fingerprint">◎</div>
+          <div class="fingerprint">â—Ž</div>
 
           <strong>No baseline yet</strong>
 
@@ -131,7 +131,7 @@ document.querySelector('#app').innerHTML = `
 
           <div class="signal">
             <span>Common emoji</span>
-            <strong>❤️ 😊</strong>
+            <strong>â¤ï¸ ðŸ˜Š</strong>
           </div>
 
           <div class="signal">
@@ -160,7 +160,7 @@ document.querySelector('#app').innerHTML = `
         <span>03</span>
       </div>
 
-      <textarea id="suspectMessage">Hi Alex, I've lost my phone. This is my new number. I need £850 urgently. Can you transfer it now?</textarea>
+      <textarea id="suspectMessage">Hi Alex, I've lost my phone. This is my new number. I need Â£850 urgently. Can you transfer it now?</textarea>
 
       <button
         id="analyseButton"
@@ -264,7 +264,7 @@ const demoBaseline = {
   person: 'Mum',
   primaryLanguage: 'ro',
   typicalGreetings: ['alex', 'pui'],
-  commonEmoji: ['❤️', '😊'],
+  commonEmoji: ['â¤ï¸', 'ðŸ˜Š'],
   expectedPaymentRequest: false,
   knownPhoneContext: true,
   messageCount: null,
@@ -342,7 +342,7 @@ function renderDemoProfile() {
 
   signalRows[3].querySelector(
     'strong'
-  ).textContent = '❤️ 😊'
+  ).textContent = 'â¤ï¸ ðŸ˜Š'
 
   signalRows[4].querySelector(
     'strong'
@@ -479,7 +479,7 @@ function renderAIChallenge(
   }
 
   challengeQuestion.textContent =
-    `“${challenge.question}”`
+    `â€œ${challenge.question}â€`
 
   challengeNote.textContent =
     'AI generated this question from shared history. KinCheck does not need or evaluate the answer.'
@@ -666,7 +666,7 @@ function analyseIdentity(
     signals.push({
       type: 'greeting',
       label: 'Greeting mismatch',
-      detail: '“Hi Alex” is atypical',
+      detail: 'â€œHi Alexâ€ is atypical',
       severity: 1
     })
   }
@@ -696,7 +696,7 @@ function analyseIdentity(
   }
 
   const moneyPattern =
-    /(?:£|€|\$)\s?\d+|\b\d+\s?(?:pounds?|euros?|dollars?)\b/i
+    /(?:Â£|â‚¬|\$)\s?\d+|\b\d+\s?(?:pounds?|euros?|dollars?)\b/i
 
   const paymentWords = [
     'transfer',
@@ -968,3 +968,5 @@ analyseButton.addEventListener(
       'Identity checked'
   }
 )
+import('./trustUI.js')
+
