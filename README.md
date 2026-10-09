@@ -1,5 +1,5 @@
 
-# KinCheck â€” Trust Before Action
+# KinCheck - Trust Before Action
 
 > **AI can clone their voice. It can't clone your history.**
 
@@ -293,9 +293,9 @@ The verification workflow supports a configurable amount and recipient.
 After creating a request and approving it on the simulated trusted device, KinCheck demonstrates:
 
 - **Original request:** VERIFIED
-- **Modified amount:** REJECTED — signature mismatch
-- **Modified recipient:** REJECTED — signature mismatch
-- **Reused proof:** REJECTED — replay detected
+- **Modified amount:** REJECTED   signature mismatch
+- **Modified recipient:** REJECTED   signature mismatch
+- **Reused proof:** REJECTED   replay detected
 
 The request fields are locked after creation. Tampering demonstrations construct modified payloads and verify them against the original signature.
 
