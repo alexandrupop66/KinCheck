@@ -33,14 +33,11 @@ document.querySelector('#app').innerHTML = `
       <div class="eyebrow">AI + CYBERSECURITY</div>
 
       <h1>
-        AI can clone their voice.<br>
-        <span>It can't clone your history.</span>
+        Don't just trust the message.<br>
+        <span>Verify the action.</span>
       </h1>
 
-      <p>
-        When a message doesn't feel right, KinCheck compares it with the
-        relationship you actually know â€” not just the words on the screen.
-      </p>
+      <p>A familiar message isn't proof of authorisation. KinCheck detects suspicious messages and verifies exact requests using cryptographic signatures.</p>
     </section>
 
     <section class="workspace">
@@ -194,7 +191,7 @@ document.querySelector('#app').innerHTML = `
           </div>
 
           <h3>
-            Don't trust the voice. Verify the history.
+            Don't trust the message alone. Check your shared history.
           </h3>
 
           <p>Ask them:</p>

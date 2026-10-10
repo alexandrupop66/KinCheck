@@ -1,7 +1,7 @@
 
 # KinCheck - Trust Before Action
 
-> **AI can clone their voice. It can't clone your history.**
+> **Don't just trust the message. Verify the action.**
 
 An AI-assisted impersonation risk checker with cryptographic, action-bound verification.
 
@@ -282,7 +282,7 @@ A production design would require secure trusted-device enrolment, protected sig
 
 **AI proposes. Cryptography proves. Deterministic rules decide.**
 
-KinCheck does not try to prove that a voice or message is fake.
+KinCheck does not claim to prove that a message is fake.
 
 It demonstrates how a cryptographic signature can prove that an exact request payload was signed, and reject altered requests.
 
