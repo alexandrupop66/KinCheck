@@ -128,7 +128,7 @@ document.querySelector('#app').innerHTML = `
 
           <div class="signal">
             <span>Common emoji</span>
-            <strong>â¤ï¸ ðŸ˜Š</strong>
+            <strong>&#10084;&#65039; &#128522;</strong>
           </div>
 
           <div class="signal">
@@ -157,7 +157,7 @@ document.querySelector('#app').innerHTML = `
         <span>03</span>
       </div>
 
-      <textarea id="suspectMessage">Hi Alex, I've lost my phone. This is my new number. I need Â£850 urgently. Can you transfer it now?</textarea>
+      <textarea id="suspectMessage">Hi Alex, I've lost my phone. This is my new number. I need &#163;850 urgently. Can you transfer it now?</textarea>
 
       <button
         id="analyseButton"
@@ -261,7 +261,7 @@ const demoBaseline = {
   person: 'Mum',
   primaryLanguage: 'ro',
   typicalGreetings: ['alex', 'pui'],
-  commonEmoji: ['â¤ï¸', 'ðŸ˜Š'],
+  commonEmoji: ['\u2764\uFE0F', '\u{1F60A}'],
   expectedPaymentRequest: false,
   knownPhoneContext: true,
   messageCount: null,
@@ -339,7 +339,7 @@ function renderDemoProfile() {
 
   signalRows[3].querySelector(
     'strong'
-  ).textContent = 'â¤ï¸ ðŸ˜Š'
+  ).textContent = demoBaseline.commonEmoji.join(" ")
 
   signalRows[4].querySelector(
     'strong'
@@ -663,7 +663,7 @@ function analyseIdentity(
     signals.push({
       type: 'greeting',
       label: 'Greeting mismatch',
-      detail: 'â€œHi Alexâ€ is atypical',
+      detail: 'Hi Alex is atypical for this relationship',
       severity: 1
     })
   }
