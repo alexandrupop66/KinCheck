@@ -7,8 +7,7 @@ import {
 } from './trustProof.js'
 
 // KinCheck — Trust Before Action
-// Local simulation of a trusted device.
-// Cryptographic signing and verification are real.
+// Real cryptographic signatures; locally simulated trusted device.
 
 const result = document.querySelector('#result')
 const verdict = result.querySelector('.verdict')
@@ -52,10 +51,19 @@ panel.innerHTML = `
   </div>
 
   <div id="trustWorkspace" class="hidden">
-    <h3>Exact action requested</h3>
+    <h3>Original signed request</h3>
 
     <p id="trustSummary"></p>
     <p id="trustRequestId"></p>
+
+    <div id="trustComparison" class="hidden"
+      style="padding:16px; margin:18px 0;
+      border:1px solid #394454; border-radius:10px;
+      background:#101820">
+      <strong>Payload comparison</strong>
+      <p id="trustOriginalPayload"></p>
+      <p id="trustModifiedPayload"></p>
+    </div>
 
     <button id="approveTrust" class="primary">
       Approve on trusted device (simulated)
@@ -96,6 +104,10 @@ let request = null
 let signature = null
 let verificationUsed = new Set()
 
+function formatAction(payload) {
+  return `Send GBP ${payload.amount.toFixed(2)} to ${payload.recipient}`
+}
+
 function showOutcome(status, reason) {
   const outcome = $('#trustOutcome')
   outcome.replaceChildren()
@@ -113,6 +125,23 @@ function showOutcome(status, reason) {
   detail.textContent = reason
 
   outcome.append(heading, detail)
+}
+
+function showComparison(modified) {
+  $('#trustComparison').classList.remove('hidden')
+
+  $('#trustOriginalPayload').textContent =
+    `ORIGINAL (SIGNED): ${formatAction(request)}`
+
+  $('#trustModifiedPayload').textContent =
+    `MODIFIED (UNSIGNED): ${formatAction(modified)}`
+
+  $('#trustOriginalPayload').style.color = '#4be0ae'
+  $('#trustModifiedPayload').style.color = '#ef4444'
+}
+
+function hideComparison() {
+  $('#trustComparison').classList.add('hidden')
 }
 
 function setInputLocked(locked) {
@@ -140,11 +169,11 @@ $('#createTrustRequest').addEventListener('click', async () => {
       amount <= 0 ||
       !recipient
     ) {
+      $('#trustWorkspace').classList.remove('hidden')
       showOutcome(
         'ERROR',
         'Enter a valid positive amount and recipient.'
       )
-      $('#trustWorkspace').classList.remove('hidden')
       return
     }
 
@@ -163,14 +192,13 @@ $('#createTrustRequest').addEventListener('click', async () => {
 
     $('#trustWorkspace').classList.remove('hidden')
 
-    $('#trustSummary').textContent =
-      `Send GBP ${amount.toFixed(2)} to ${recipient}`
-
+    $('#trustSummary').textContent = formatAction(request)
     $('#trustRequestId').textContent =
       `Request ID: ${request.requestId}`
 
     setInputLocked(true)
     resetButtons()
+    hideComparison()
 
     showOutcome(
       'PENDING',
@@ -198,9 +226,11 @@ $('#approveTrust').addEventListener('click', async () => {
     $('#tamperTrust').disabled = false
     $('#tamperRecipient').disabled = false
 
+    hideComparison()
+
     showOutcome(
       'APPROVED',
-      `Simulated trusted device signed: ${$('#trustSummary').textContent}`
+      `Simulated trusted device signed: ${formatAction(request)}`
     )
   } catch {
     showOutcome('ERROR', 'Cryptographic signing failed.')
@@ -209,6 +239,8 @@ $('#approveTrust').addEventListener('click', async () => {
 
 $('#verifyTrust').addEventListener('click', async () => {
   if (!request || !signature || !trustedKeys) return
+
+  hideComparison()
 
   const outcome = await verifyRequest(
     request,
@@ -233,6 +265,11 @@ $('#tamperTrust').addEventListener('click', async () => {
     amount: request.amount === 800 ? 850 : 800
   }
 
+$('#trustAmount').value = String(modified.amount)
+  showComparison(modified)
+
+  // Independent verification context isolates signature mismatch
+  // from replay detection.
   const outcome = await verifyRequest(
     modified,
     signature,
@@ -255,6 +292,8 @@ $('#tamperRecipient').addEventListener('click', async () => {
     recipient: `${request.recipient}-changed`
   }
 
+  showComparison(modified)
+
   const outcome = await verifyRequest(
     modified,
     signature,
@@ -271,6 +310,8 @@ $('#tamperRecipient').addEventListener('click', async () => {
 $('#replayTrust').addEventListener('click', async () => {
   if (!request || !signature || !trustedKeys) return
 
+  hideComparison()
+
   const outcome = await verifyRequest(
     request,
     signature,
@@ -281,7 +322,7 @@ $('#replayTrust').addEventListener('click', async () => {
   showOutcome(outcome.status, outcome.reason)
 })
 
-// Reveal the panel after VERIFY or HIGH RISK.
+// Reveal after VERIFY or HIGH RISK.
 const observer = new MutationObserver(() => {
   const label = verdict.querySelector('strong')?.textContent
 
